@@ -1,7 +1,9 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
+
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
 
 export TANZU_NET_API_TOKEN=$tanzu_net_api_token
@@ -19,64 +21,68 @@ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -H "Au
 
 echo "Enter your terminal OS as (l or m)- l as linux , m as mac in var config file"
 
-var="m"
+var="$os"
 filename=""
 
-if [ "$os" == "$var" ]; then
+if [[ "$os" == "m" ]]; then
     echo "OS = mac"
 
-# install tanzu cli v(0.25) and plug-ins (mac)
-#url linux-  tanzu cli -  https://network.pivotal.io/api/v2/products/tanzu-application-platform/releases/1182301/product_files/1310085/download
+    # install tanzu cli v(0.25.4) and plug-ins (mac)
+    #url linux-  tanzu cli -  https://network.tanzu.vmware.com/api/v2/products/tanzu-application-platform/releases/1239018/product_files/1404618/download
 
-#url mac- tanzu cli - https://network.pivotal.io/api/v2/products/tanzu-application-platform/releases/1182301/product_files/1310083/download
-
-
-
-#file name - mac= tanzu-framework-darwin-amd64.tar , linux= tanzu-framework-linux-amd64.tar
+    #url mac- tanzu cli - https://network.tanzu.vmware.com/api/v2/products/tanzu-application-platform/releases/1239018/product_files/1404617/download
 
 
-tanzucliurl=https://network.pivotal.io/api/v2/products/tanzu-application-platform/releases/1182301/product_files/1310083/download
-tanzuclifilename=tanzu-framework-darwin-amd64.tar
-
-mkdir $HOME/tanzu
-cd $HOME/tanzu
-wget $tanzucliurl --header="Authorization: Bearer ${access_token}" -O $HOME/tanzu/$tanzuclifilename
-tar -xvf $HOME/tanzu/$tanzuclifilename -C $HOME/tanzu
-
-export VERSION=v0.25.0
-install $HOME/tanzu/cli/core/$VERSION/tanzu-core-darwin_amd64 /usr/local/bin/tanzu
+    #file name - mac= tanzu-framework-darwin-amd64.tar , linux= tanzu-framework-linux-amd64.tar
 
 
-# install yq package 
- wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_darwin_amd64
- sudo chmod a+x /usr/local/bin/yq
-yq --version
+    tanzucliurl=https://network.tanzu.vmware.com/api/v2/products/tanzu-application-platform/releases/1239018/product_files/1404617/download
+    tanzuclifilename=tanzu-framework-darwin-amd64.tar
+
+    mkdir -p $HOME/tanzu
+    cd $HOME/tanzu
+    wget $tanzucliurl --header="Authorization: Bearer ${access_token}" -O $HOME/tanzu/$tanzuclifilename
+    tar -xvf $HOME/tanzu/$tanzuclifilename -C $HOME/tanzu
+
+    export VERSION=v0.25.4
+    install $HOME/tanzu/cli/core/$VERSION/tanzu-core-darwin_amd64 /usr/local/bin/tanzu
+
+
+    # install yq package 
+     wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_darwin_amd64
+     sudo chmod a+x /usr/local/bin/yq
+    yq --version
    
 else
     echo "OS = Linux/ubuntu"
 
-# install tanzu cli v(0.25) and plug-ins (linux)
-#url linux-  tanzu cli -  https://network.pivotal.io/api/v2/products/tanzu-application-platform/releases/1182301/product_files/1310085/download
-#url mac- tanzu cli - https://network.pivotal.io/api/v2/products/tanzu-application-platform/releases/1182301/product_files/1310083/download
+    # install tanzu cli v(0.25.4) and plug-ins (linux)
 
-#file name - mac= tanzu-framework-darwin-amd64.tar , linux= tanzu-framework-linux-amd64.tar
+    # install tanzu cli v(0.25.4) and plug-ins (mac)
+    #url linux-  tanzu cli -  https://network.tanzu.vmware.com/api/v2/products/tanzu-application-platform/releases/1239018/product_files/1404618/download
 
-tanzucliurl=https://network.pivotal.io/api/v2/products/tanzu-application-platform/releases/1182301/product_files/1310085/download
-tanzuclifilename=tanzu-framework-linux-amd64.tar
+    #url mac- tanzu cli - https://network.tanzu.vmware.com/api/v2/products/tanzu-application-platform/releases/1239018/product_files/1404617/download
 
 
-mkdir $HOME/tanzu
-cd $HOME/tanzu
-wget $tanzucliurl --header="Authorization: Bearer ${access_token}" -O $HOME/tanzu/$tanzuclifilename
-tar -xvf $HOME/tanzu/$tanzuclifilename -C $HOME/tanzu
 
-export VERSION=v0.25.0
- install $HOME/tanzu/cli/core/$VERSION/tanzu-core-linux_amd64 /usr/local/bin/tanzu
+    #file name - mac= tanzu-framework-darwin-amd64.tar , linux= tanzu-framework-linux-amd64.tar
 
-# install yq package 
- wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
- sudo chmod a+x /usr/local/bin/yq
-yq --version
+    tanzucliurl=https://network.tanzu.vmware.com/api/v2/products/tanzu-application-platform/releases/1239018/product_files/1404618/download
+    tanzuclifilename=tanzu-framework-linux-amd64.tar
+
+
+    mkdir -p $HOME/tanzu
+    cd $HOME/tanzu
+    wget $tanzucliurl --header="Authorization: Bearer ${access_token}" -O $HOME/tanzu/$tanzuclifilename
+    tar -xvf $HOME/tanzu/$tanzuclifilename -C $HOME/tanzu
+
+    export VERSION=v0.25.4
+     install $HOME/tanzu/cli/core/$VERSION/tanzu-core-linux_amd64 /usr/local/bin/tanzu
+
+    # install yq package 
+     wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+     sudo chmod a+x /usr/local/bin/yq
+    yq --version
 
 fi
 

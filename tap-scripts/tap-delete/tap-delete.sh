@@ -1,10 +1,12 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source ../var.conf
+
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/../var.conf"
 
 #delete tap from build cluster
-aws eks --region $aws_region update-kubeconfig --name tap-build
+aws eks --region $aws_region update-kubeconfig --name $TAP_BUILD_CLUSTER_NAME
 echo "deleting tap from build cluster"
 #delete all tap packages 
 tanzu package installed delete tap -n tap-install --yes
@@ -22,7 +24,7 @@ cd $HOME/tanzu-cluster-essentials
 ./uninstall.sh --yes
 
 #delete tap from view cluster
-aws eks --region $aws_region update-kubeconfig --name tap-view
+aws eks --region $aws_region update-kubeconfig --name $TAP_VIEW_CLUSTER_NAME
 echo "deleting tap from view cluster"
 #delete all tap packages 
 tanzu package installed delete tap -n tap-install --yes
@@ -40,7 +42,7 @@ cd $HOME/tanzu-cluster-essentials
 ./uninstall.sh --yes
 
 #delete tap from run cluster
-aws eks --region $aws_region update-kubeconfig --name tap-run
+aws eks --region $aws_region update-kubeconfig --name $TAP_RUN_CLUSTER_NAME
 echo "deleting tap from run cluster"
 #delete all tap packages 
 tanzu package installed delete tap -n tap-install --yes
@@ -58,7 +60,7 @@ cd $HOME/tanzu-cluster-essentials
 ./uninstall.sh --yes
 
 #delete tap from iterate cluster
-aws eks --region $aws_region update-kubeconfig --name tap-iterate
+aws eks --region $aws_region update-kubeconfig --name $TAP_ITERATE_CLUSTER_NAME
 echo "deleting tap from iterate cluster"
 #delete all tap packages 
 tanzu package installed delete tap -n tap-install --yes

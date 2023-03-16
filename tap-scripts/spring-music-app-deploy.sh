@@ -1,45 +1,38 @@
 #!/bin/bash
 
-
 CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
 source ${CWD}/var.conf
-export TAP_APP_NAME=tanzu-java-web-app
+
+TAP_APP_NAME=spring-music 
+
 echo "Build source code in build cluster !!!"
 
 echo "Login to build cluster !!!"
-echo "kubeconfig: $KUBECONFIG"
 aws eks --region $aws_region update-kubeconfig --name $TAP_BUILD_CLUSTER_NAME
 
 tanzu apps workload list
 
 echo "delete existing app"
-
 tanzu apps workload delete ${TAP_APP_NAME} --yes
 
 
-
-
-tanzu apps workload create tanzu-java-web-app \
---git-repo https://github.com/vmware-tanzu/application-accelerator-samples \
---sub-path tanzu-java-web-app \
---git-branch main \
+tanzu apps workload create spring-music \
+--git-repo https://github.com/PeterEltgroth/spring-music \
+--git-branch tap1.3 \
 --type web \
---label app.kubernetes.io/part-of=tanzu-java-web-app \
---yes \
---namespace ${TAP_DEV_NAMESPACE}
+--label app.kubernetes.io/part-of=spring-music \
+--yes
 
 
-#tanzu apps workload tail tanzu-java-web-app --since 3m --timestamp --namespace ${TAP_DEV_NAMESPACE}
-echo "Waiting for app build !!!! "
-sleep 50
+#sleep 20
 
+tanzu apps workload list
 
 tanzu apps workload get "${TAP_APP_NAME}"
 
 echo "generate tap-demo deliver.yaml workload "
 
-kubectl get configmap tanzu-java-web-app-deliverable -n ${TAP_DEV_NAMESPACE} -o go-template='{{.data.deliverable}}' > ${TAP_APP_NAME}-delivery.yaml
+kubectl get configmap ${TAP_APP_NAME}-deliverable -n ${TAP_DEV_NAMESPACE} -o go-template='{{.data.deliverable}}' > ${TAP_APP_NAME}-delivery.yaml
 
 cat ${TAP_APP_NAME}-delivery.yaml
 
@@ -48,10 +41,7 @@ aws eks --region $aws_region update-kubeconfig --name $TAP_RUN_CLUSTER_NAME
 
 kubectl apply -f ${TAP_APP_NAME}-delivery.yaml
 
-kubectl get deliverable -A   
-
-kubectl get httpproxy --namespace ${DEVELOPER_NAMESPACE}
-
+kubectl get deliverable -A
 sleep 15
 echo "get app url and copy into browser to test the app"
 kubectl get ksvc

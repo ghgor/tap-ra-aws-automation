@@ -1,30 +1,30 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
 
-chmod +x tanzu-essential-setup.sh
-chmod +x tap-repo.sh
-chmod +x tap-run-profile.sh
-chmod +x tap-dev-namespace.sh
+set -e
 
-chmod +x var-input-validatation.sh
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
-./var-input-validatation.sh
+chmod +x ${CWD}/tanzu-essential-setup.sh
+chmod +x ${CWD}/tap-repo.sh
+chmod +x ${CWD}/tap-run-profile.sh
+chmod +x ${CWD}/tap-dev-namespace.sh
+chmod +x ${CWD}/eks-csi.sh
 
-echo  "Login to RUN Cluster !!! "
-aws eks --region $aws_region update-kubeconfig --name ${TAP_RUN_CLUSTER_NAME}
+chmod +x ${CWD}/var-input-validatation.sh
 
-#login to kubernets eks run cluster
-#kubectl config get-contexts
-#read -p "Select Kubernetes context of run cluster: " target_context
-#kubectl config use-context $target_context
+${CWD}/var-input-validatation.sh
+
+echo  "RUN Cluster - Login and check AWS EKS CSI Driver"
+${CWD}/eks-csi.sh -c $TAP_RUN_CLUSTER_NAME
 
 echo "Step 1 => installing tanzu essential in RUN cluster !!!"
-./tanzu-essential-setup.sh
+${CWD}/tanzu-essential-setup.sh
 echo "Step 2 => installing TAP Repo in RUN cluster !!! "
-./tap-repo.sh
+${CWD}/tap-repo.sh
 echo "Step 3 => installing TAP RUN Profile !!! "
-./tap-run-profile.sh
+${CWD}/tap-run-profile.sh
 echo "Step 4 => installing TAP developer namespace in RUN cluster !!! "
-./tap-dev-namespace.sh
+${CWD}/tap-dev-namespace.sh

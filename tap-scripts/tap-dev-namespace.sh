@@ -6,7 +6,8 @@
 #read -p "Enter custom registry user: " registry_user
 #read -p "Enter custom registry password: " registry_password
 
-source var.conf
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
 if [ $registry_url = "${DOCKERHUB_REGISTRY_URL}" ]
 then

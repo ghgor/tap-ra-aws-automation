@@ -4,6 +4,9 @@
 # Ignore Mac system files
 .DS_store
 
+# an optional extra file containing sensitive variables
+.cc
+
 # Ignore node_modules folder
 node_modules
 

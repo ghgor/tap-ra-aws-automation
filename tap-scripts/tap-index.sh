@@ -1,30 +1,43 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
 
-chmod +x tap-view.sh
-chmod +x tap-run.sh
-chmod +x tap-build.sh
-chmod +x tanzu-cli-setup.sh
-chmod +x tap-demo-app-deploy.sh
-chmod +x tap-iterate.sh
-chmod +x tap-iterate.sh
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+echo "scripts working dir: $CWD"
+source "${CWD}/var.conf"
 
-chmod +x var-input-validatation.sh
+echo "KUBECONFIG: $KUBECONFIG"
 
-./var-input-validatation.sh
+
+# create a temporary kubeconfig add clusters
+# export KUBECONFIG="${CWD}/tmp-kubeconfig.yaml"
+touch $KUBECONFIG
+
+for cluster in ${ALL_CLUSTERS[@]}; do
+    aws eks --region $aws_region update-kubeconfig --name $cluster
+done
+
+chmod +x "${CWD}/tap-view.sh"
+chmod +x "${CWD}/tap-run.sh"
+chmod +x "${CWD}/tap-build.sh"
+chmod +x "${CWD}/tanzu-cli-setup.sh"
+chmod +x "${CWD}/tap-demo-app-deploy.sh"
+chmod +x "${CWD}/tap-iterate.sh"
+chmod +x "${CWD}/tap-iterate.sh"
+
+chmod +x "${CWD}/var-input-validatation.sh"
+
+${CWD}/var-input-validatation.sh
 echo "Step 1 => installing tanzu cli !!!"
-./tanzu-cli-setup.sh
+${CWD}/tanzu-cli-setup.sh
 echo "Step 2 => Setup TAP View Cluster"
-./tap-view.sh
+${CWD}/tap-view.sh
 echo "Step 3 => Setup TAP Run Cluster"
-./tap-run.sh
+${CWD}/tap-run.sh
 echo "Step 4 => Setup TAP Build Cluster"
-./tap-build.sh
-
-echo "Step 4 => Setup TAP Build Cluster"
-./tap-iterate.sh
+${CWD}/tap-build.sh
+echo "Step 5 => Setup TAP Iterate Cluster"
+${CWD}/tap-iterate.sh
 
 echo "pick an external ip from service output and configure DNS wildcard records in your dns server for view and run cluster"
 echo "example view cluster - *.view.customer0.io ==> <ingress external ip/cname>"
@@ -32,4 +45,4 @@ echo "example run cluster - *.run.customer0.io ==> <ingress external ip/cname> "
 echo "example iterate cluster - *.iter.customer0.io ==> <ingress external ip/cname> " 
 
 echo "Step 5 => Deploy sample app"
-./tap-demo-app-deploy.sh
+${CWD}/tap-demo-app-deploy.sh

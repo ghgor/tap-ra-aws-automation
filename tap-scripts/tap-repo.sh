@@ -1,10 +1,12 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
+
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
 #login to kubernets eks cluster
-#kubectl config get-contexts
+kubectl config get-contexts
 #read -p "Target Context: " target_context
 #kubectl config use-context $target_context
 

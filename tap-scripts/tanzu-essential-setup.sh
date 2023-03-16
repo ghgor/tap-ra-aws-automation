@@ -1,7 +1,9 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
+
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
 export INSTALL_BUNDLE=$INSTALL_BUNDLE
 export INSTALL_REGISTRY_HOSTNAME=$INSTALL_REGISTRY_HOSTNAME
@@ -23,46 +25,48 @@ echo "Enter your terminal OS as (l or m)- l as linux , m as mac in var config fi
 var="m"
 filename=""
 
-if [ "$os" == "$var" ]; then
+if [[ "$os" == "m" ]]; then
     echo "OS = mac"
 
-# install tanzu cluster essentials
+    # install tanzu cluster essentials
 
-#mac - https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1180593/product_files/1330472/download
-#linux -https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1180593/product_files/1330470/download
-#file name - mac = tanzu-cluster-essentials-darwin-amd64-1.3.0.tgz , linux = tanzu-cluster-essentials-linux-amd64-1.3.0.tgz
+    #mac - https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1249982/product_files/1423996/download
 
-filename=tanzu-cluster-essentials-darwin-amd64-1.3.0.tgz
-tanzuessnurl=https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1180593/product_files/1330472/download
-mkdir $HOME/tanzu-cluster-essentials
-wget $tanzuessnurl --header="Authorization: Bearer ${access_token}" -O $HOME/tanzu-cluster-essentials/$filename
-tar -xvf $HOME/tanzu-cluster-essentials/$filename -C $HOME/tanzu-cluster-essentials
+    #linux -https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1249982/product_files/1423994/download
 
-cd $HOME/tanzu-cluster-essentials
-./install.sh --yes
+    #file name - mac = tanzu-cluster-essentials-darwin-amd64-1.4.1.tgz , linux = tanzu-cluster-essentials-linux-amd64-1.4.1.tgz
 
-sudo cp $HOME/tanzu-cluster-essentials/kapp /usr/local/bin/kapp
-sudo cp $HOME/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg
+    filename=$tanzu_ess_filename_m
+    mkdir -p $HOME/tanzu-cluster-essentials
+    wget $tanzu_ess_url_m --header="Authorization: Bearer ${access_token}" -O $HOME/tanzu-cluster-essentials/$filename
+    tar -xvf $HOME/tanzu-cluster-essentials/$filename -C $HOME/tanzu-cluster-essentials
+
+    cd $HOME/tanzu-cluster-essentials
+    ./install.sh --yes
+
+    sudo cp $HOME/tanzu-cluster-essentials/kapp /usr/local/bin/kapp
+    sudo cp $HOME/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg
    
 
 else
     echo "OS = Linux/ubuntu"
 
-#mac - https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1180593/product_files/1330472/download
-#linux -https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1180593/product_files/1330470/download
-#file name - mac = tanzu-cluster-essentials-darwin-amd64-1.3.0.tgz , linux = tanzu-cluster-essentials-linux-amd64-1.3.0.tgz
+    #mac - https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1249982/product_files/1423996/download
 
-filename=tanzu-cluster-essentials-linux-amd64-1.3.0.tgz
-tanzuessnurl=https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1180593/product_files/1330470/download
-mkdir $HOME/tanzu-cluster-essentials
-wget $tanzuessnurl --header="Authorization: Bearer ${access_token}" -O $HOME/tanzu-cluster-essentials/$filename
-tar -xvf $HOME/tanzu-cluster-essentials/$filename -C $HOME/tanzu-cluster-essentials
+    #linux -https://network.tanzu.vmware.com/api/v2/products/tanzu-cluster-essentials/releases/1249982/product_files/1423994/download
 
-cd $HOME/tanzu-cluster-essentials
-./install.sh --yes
+    #file name - mac = tanzu-cluster-essentials-darwin-amd64-1.4.1.tgz , linux = tanzu-cluster-essentials-linux-amd64-1.4.1.tgz
 
-sudo cp $HOME/tanzu-cluster-essentials/kapp /usr/local/bin/kapp
-sudo cp $HOME/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg
+    filename=$tanzu_ess_filename_l
+    mkdir -p $HOME/tanzu-cluster-essentials
+    wget $tanzu_ess_url_l --header="Authorization: Bearer ${access_token}" -O $HOME/tanzu-cluster-essentials/$filename
+    tar -xvf $HOME/tanzu-cluster-essentials/$filename -C $HOME/tanzu-cluster-essentials
+
+    cd $HOME/tanzu-cluster-essentials
+    ./install.sh --yes
+
+    sudo cp $HOME/tanzu-cluster-essentials/kapp /usr/local/bin/kapp
+    sudo cp $HOME/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg
 
 fi
 

@@ -1,7 +1,9 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
+
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
 #export TAP_NAMESPACE="tap-install"
 export TAP_REGISTRY_USER=$registry_user
@@ -61,8 +63,6 @@ contour:
 cnrs:
   domain_name: "${tap_iterate_domain}"
 
-excluded_packages:
-  - policy.apps.tanzu.vmware.com
 
 EOF
 

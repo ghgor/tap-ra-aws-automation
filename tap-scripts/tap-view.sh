@@ -1,30 +1,32 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
 
-chmod +x tanzu-essential-setup.sh
-chmod +x tap-repo.sh
-chmod +x tap-view-profile.sh
-chmod +x tap-dev-namespace.sh
+set -e
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
-chmod +x var-input-validatation.sh
+chmod +x ${CWD}/tanzu-essential-setup.sh
+chmod +x ${CWD}/tap-repo.sh
+chmod +x ${CWD}/tap-view-profile.sh
+chmod +x ${CWD}/tap-dev-namespace.sh
+chmod +x ${CWD}/eks-csi.sh
 
-./var-input-validatation.sh
+chmod +x ${CWD}/var-input-validatation.sh
 
-echo  "Login to View Cluster !!! "
-#login to kubernets eks run cluster
-aws eks --region $aws_region update-kubeconfig --name ${TAP_VIEW_CLUSTER_NAME} 
+${CWD}/var-input-validatation.sh
 
+echo  "VIEW Cluster - Login and check AWS EKS CSI Driver"
+${CWD}/eks-csi.sh -c $TAP_VIEW_CLUSTER_NAME
 
 #kubectl config get-contexts
 #read -p "Select Kubernetes context of view cluster: " target_context
 #kubectl config use-context $target_context
 echo "Step 1 => installing tanzu cli and tanzu essential in VIEW cluster !!!"
-./tanzu-essential-setup.sh
+${CWD}/tanzu-essential-setup.sh
 echo "Step 2 => installing TAP Repo in VIEW cluster !!! "
-./tap-repo.sh
+${CWD}/tap-repo.sh
 echo "Step 3 => installing TAP VIEW  Profile !!! "
-./tap-view-profile.sh
+${CWD}/tap-view-profile.sh
 echo "Step 4 => installing TAP developer namespace in VIEW cluster !!! "
-./tap-dev-namespace.sh
+${CWD}/tap-dev-namespace.sh

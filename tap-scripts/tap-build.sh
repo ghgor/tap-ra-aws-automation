@@ -1,27 +1,29 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
 
-chmod +x tanzu-essential-setup.sh
-chmod +x tap-repo.sh
-chmod +x tap-build-profile.sh
-chmod +x tap-dev-namespace.sh
-chmod +x tanzu-cli-setup.sh
+set -e
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
-chmod +x var-input-validatation.sh
+chmod +x ${CWD}/tanzu-essential-setup.sh
+chmod +x ${CWD}/tap-repo.sh
+chmod +x ${CWD}/tap-build-profile.sh
+chmod +x ${CWD}/tap-dev-namespace.sh
+chmod +x ${CWD}/eks-csi.sh
 
-./var-input-validatation.sh
+chmod +x ${CWD}/var-input-validatation.sh
 
-echo  "Login to BUILD Cluster !!! "
-aws eks --region $aws_region update-kubeconfig --name ${TAP_BUILD_CLUSTER_NAME}
+${CWD}/var-input-validatation.sh
 
+echo  "BUILD Cluster - Login and check AWS EKS CSI Driver"
+${CWD}/eks-csi.sh -c $TAP_BUILD_CLUSTER_NAME
 
 echo "Step 1 => installing tanzu essential in BUILD Cluster !!!"
-./tanzu-essential-setup.sh
+${CWD}/tanzu-essential-setup.sh
 echo "Step 2 => installing TAP Repo in BUILD Cluster !!! "
-./tap-repo.sh
+${CWD}/tap-repo.sh
 echo "Step 3 => installing TAP Build Profile !!! "
-./tap-build-profile.sh
+${CWD}/tap-build-profile.sh
 echo "Step 4 => installing TAP developer namespace in BUILD Cluster !!! "
-./tap-dev-namespace.sh
+${CWD}/tap-dev-namespace.sh

@@ -13,7 +13,8 @@
 #read -p "Enter cnrs domain: " tap_cnrs_domain
 #read -p "Enter app live view domain: " alv_domain
 
-source var.conf
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
 #export TAP_NAMESPACE="tap-install"
 export TAP_REGISTRY_SERVER=$registry_url
@@ -45,8 +46,6 @@ appliveview_connector:
     ingressEnabled: "true"
     host: appliveview.$tap_view_domain
 
-excluded_packages:
-  - policy.apps.tanzu.vmware.com
 
 EOF
 

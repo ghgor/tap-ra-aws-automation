@@ -1,7 +1,9 @@
 #!/bin/bash
 # Copyright 2022 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
-source var.conf
+
+CWD=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "${CWD}/var.conf"
 
 cat <<EOF | tee tap-gui-viewer-service-account-rbac.yaml
 apiVersion: v1
@@ -114,6 +116,7 @@ rules:
 
 EOF
 
+
 #switch to tap build cluster to get token 
 echo "login to build cluster to apply tap-gui-viewer-service-account-rbac.yaml"
 aws eks --region $aws_region update-kubeconfig --name ${TAP_BUILD_CLUSTER_NAME}
@@ -170,19 +173,11 @@ learningcenter:
   ingressClass: contour
 tap_gui:
   service_type: ClusterIP
-  ingressEnabled: "true"
-  ingressDomain: "${tap_view_domain}"
   app_config:
-    app:
-      baseUrl: "http://tap-gui.${tap_view_domain}"
     catalog:
       locations:
         - type: url
           target: ${tap_git_catalog_url}
-    backend:
-        baseUrl: "http://tap-gui.${tap_view_domain}"
-        cors:
-          origin: "http://tap-gui.${tap_view_domain}"
 
     kubernetes:
       serviceLocatorMethod:
